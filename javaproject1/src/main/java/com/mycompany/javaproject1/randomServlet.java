@@ -9,26 +9,50 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/random")
+// GET /jeunombre
+@WebServlet("/jeunombre")
 public class randomServlet extends HttpServlet {
     
-     @Override
-     public void doGet(HttpServletRequest request, HttpServletResponse response) 
-            throws IOException{
-         String number= request.getParameter("number");
+    int nombreADeviner = new Random().nextInt(10)+1;
+    int nombreTentativesRestantes = 3;
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException
+    {       
+         String nombreJoueurString = request.getParameter("nombre");
          
-        
-         Random random = new Random();
-         int randomNumber= random.nextInt(10)+1;
-         if(randomNumber == parseInt(number)){
-             response.getWriter().print("Le nombre c'est : "+ randomNumber + " Bravo! C'est gagné");
-            }else if( parseInt(number)< randomNumber){
-               response.getWriter().print("Le nombre c'est : "+ randomNumber + " C'est trop petit!");
-            }else if( parseInt(number)> randomNumber){
-                 response.getWriter().print("Le nombre c'est : "+ randomNumber + " C'est trop grand!");
+         try {
+            int nombreJoueur = Integer.parseInt(nombreJoueurString);       
+
+            nombreTentativesRestantes--;
+                            
+            response.getWriter().append("<p>Nombre à deviner: "+nombreADeviner+"</p>");
+            response.getWriter().append("<p>Nombre joué: "+nombreJoueur+"</p>");
+            response.getWriter().append("<p>Nombre tentatives restantes: "+nombreTentativesRestantes+"</p>");
+           
+            if(nombreJoueur == nombreADeviner){
+                response.getWriter().append("<p>Bravo c'est gagné !</p>");
+                response.getWriter().append("<p>Nouvelle partie démarrée</p>");
+                nombreADeviner = new Random().nextInt(10)+1;
+                nombreTentativesRestantes = 3;
+            } else {
+                if(nombreJoueur > nombreADeviner){
+                    response.getWriter().append("<p>c'est trop grand</p>");
+                } else {
+                    response.getWriter().append("<p>c'est trop petit</p>");
+                }
+                
+                if(nombreTentativesRestantes == 0){
+                    response.getWriter().append("<p>PERDU, nombre de tentatives maximum atteint</p>");
+                    response.getWriter().append("<p>Nouvelle partie démarrée</p>");
+                    nombreADeviner = new Random().nextInt(10)+1;
+                    nombreTentativesRestantes = 3;
+                }
             }
          }
-    
-    
-    
+         catch(NumberFormatException e){
+             response.getWriter().append("<p>Erreur : Veuillez saisir un nombre</p>");
+         }         
+    }
 }
