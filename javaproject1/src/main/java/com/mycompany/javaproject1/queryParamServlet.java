@@ -15,12 +15,15 @@ public class queryParamServlet extends HttpServlet {
             throws IOException{
         
        String prenom = request.getParameter("prenom");
+       
+      if(prenom == null){
+            prenom = (String)request.getSession().getAttribute("prenomdanslasession");
+        }
+        
+        request.getSession().setAttribute("prenomdanslasession", prenom);
         response.getWriter().append("<p>Tu t'appelles: </p>");
         response.getWriter().append("<p>"+prenom+"</p>");
-       
-        
-        
-    }
+       }
     
     
     
